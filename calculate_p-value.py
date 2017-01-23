@@ -64,7 +64,7 @@ def main():
         if p_val < 0.05:
             positivos += 1
 
-    print "TOTAL SIGNIFICANT RESULTS :", positivos                    
+    #print "TOTAL SIGNIFICANT RESULTS :", positivos                    
 
 if __name__ == "__main__" :
     main()
