@@ -11,7 +11,7 @@ def main():
     pv_files = [z for z in os.listdir(path_pv) if z.endswith("_alt.txt") and z.startswith("Y")]
 
 
-    '''
+    fd = dict()
     # read number of changes in FD files
     for f in fd_files:
         gene = f.split(".")[0]
@@ -22,8 +22,15 @@ def main():
                 if "p <" in line:
                     line = line.replace("\n","")
                     pos_fd.append(line.split("\t")[0])
+        fd.setdefault(gene,[])
+        for p in pos_fd:
+            p = p.replace(" ","")
+            fd[gene].append(p)
+        if len(fd) == 0:
+            fd[gene].append("0") # anhadir 0 al diccionario si no hay sitios de divergencia funcional
+            
+        print fd
 
-    '''
 
     sel = dict() # KEY: gene name VALUE: positions under positive selection
     for h in pv_files:
@@ -49,10 +56,12 @@ def main():
             x = x.replace("\n","")
             x = x.replace("    ","")
             x = x.replace("   ","")
-            residuos.append(x.split(" ")[0])
+            res.append(x.split(" ")[0])
 
         for r in res:
             sel[gene].append(r)
+
+        print sel
 
 
                     
