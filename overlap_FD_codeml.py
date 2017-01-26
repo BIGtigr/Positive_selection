@@ -2,9 +2,9 @@
 
 import sys
 import os
-from linecache import getline
 
 def main():
+    # List both FD codeml files
     path_fd = os.path.dirname(sys.argv[1])
     fd_files = [f for f in os.listdir(path_fd) if f.endswith(".txt") and f.startswith("Y")]
     path_pv = os.path.dirname(sys.argv[2])
@@ -25,13 +25,13 @@ def main():
 
     '''
 
-
+    sel = dict() # KEY: gene name VALUE: positions under positive selection
     for h in pv_files:
         pos_pv = []
         gene = h.split("_")[0]
         i = True
-        with open(os.path.join(path_pv,h),"r") as f_in:
-            
+        # Read specific codeml output until find BEB results
+        with open(os.path.join(path_pv,h),"r") as f_in: 
             for line in f_in:
                 if line == "Positive sites for foreground lineages Prob(w>1):\n":
                     line = f_in.next()
@@ -43,9 +43,17 @@ def main():
                                 i = False
 
 
-    for x in pos_pv:
-        x = x.replace("\n","")
-        print x
+        res = []
+        sel.setdefault(gene,[])
+        for x in pos_pv:
+            x = x.replace("\n","")
+            x = x.replace("    ","")
+            x = x.replace("   ","")
+            residuos.append(x.split(" ")[0])
+
+        for r in res:
+            sel[gene].append(r)
+
 
                     
 
