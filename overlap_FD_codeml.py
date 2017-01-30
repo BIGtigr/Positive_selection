@@ -75,6 +75,10 @@ def main():
         if k in fd.keys():
             val_sel = sel.get(k)
             val_fd = fd.get(k)
+            
+        common = commonElements(val_sel,val_fd)
+        common = [int(x) for x in common]
+        common.sort()
 
         common = commonElements(val_sel,val_fd)
         if len(common) != 0:
