@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 
-# USAGE: python calc_p-value.py > results.csv (run script in the folder where codeml files are)
+# USAGE: python calc_p-value. py > results.csv (call script from the folder where codeml files are)
 
 # Output: GENE NAME,p-value
 
@@ -16,26 +16,23 @@ positive selection affected a subset of sites during a specific evolutionary tim
 
 import sys
 import os
+import re
 from os.path import basename
 from scipy.stats import chisqprob
 
 
-# Get the Ln value from output codeml file
+
 def getLn(f_in):
     with open(f_in, "r") as file_in:
-        if os.stat(f_in).st_size > 0: # if file is not empty
-            for line in file_in:
-                if line.startswith("lnL"):
-                    lnl = line.split("  ")[2]
-                    break
-
-        else:
-            lnl = "NA"
+        contents = file_in.readlines()
+    targets = [s for s in contents if "lnL(ntime" in s]
+    lnl = re.findall("-\d+\.\d+", targets[0])[0] # find negative number in line lnL
+    
     return lnl
+    
 
-# Calculate p-value. Chi-square distribution with 1 degree of freedom
 def calcPvalue(ln_1,ln_2):
-    if ln_1 and ln_2 != "NA":
+    if ln_1 and ln_2:
         val = 2*(float(ln_1)-(float(ln_2)))
         p_val = chisqprob(val, 1)
     else:
@@ -58,11 +55,12 @@ def main():
         null = gene_name + "_null.txt"
         ln_alt = getLn(alt)
         ln_null = getLn(null)
-        p_val = calcPvalue(ln_alt,ln_null)
-        line = gene_name+","+str(p_val)
+        pv = calcPvalue(ln_alt,ln_null)
+        line = gene_name+","+str(pv)
         print line
-        if p_val < 0.05:
-            positivos += 1
+        if pv < 0.05:
+            with open("significativos.csv", "a") as o_file:
+                o_file.write(line+"\n")
 
     #print "TOTAL SIGNIFICANT RESULTS :", positivos                    
 
